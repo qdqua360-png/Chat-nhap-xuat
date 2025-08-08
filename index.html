@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Nhập Hàng</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f4f7f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .form-container {
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+        .form-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        .form-header svg {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+            color: #555;
+        }
+        .form-header h2 {
+            font-size: 22px;
+            color: #333;
+            margin: 0;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #555;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        .imei-note {
+            font-size: 13px;
+            color: #666;
+            margin-top: -15px;
+            margin-bottom: 20px;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .submit-btn:hover {
+            background-color: #0056b3;
+        }
+        #form-message {
+            text-align: center;
+            margin-top: 15px;
+            font-weight: 600;
+        }
+        .success {
+            color: #28a745;
+        }
+        .error {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="form-header">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M7 17.59L2.83 13.42l1.41-1.41L7 14.77l6.29-6.29 1.41 1.41L7 17.59zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"></path></svg>
+            <h2>Form Nhập Hàng</h2>
+        </div>
+        <form id="nhaphang-form">
+            <div class="form-group">
+                <label for="s25-ultra">Tên của SP:</label>
+                <input type="text" id="s25-ultra" name="s25_ultra" required placeholder="Ví dụ: Galaxy S25 Ultra">
+            </div>
+            <div class="form-group">
+                <label for="gb">Dung lượng:</label>
+                <input type="text" id="gb" name="gb" required placeholder="Ví dụ: 512GB">
+            </div>
+            <div class="form-group">
+                <label for="den">Màu:</label>
+                <input type="text" id="den" name="den" required placeholder="Ví dụ: Xanh Titan">
+            </div>
+            <div class="form-group">
+                <label for="imei">IMEI sản phẩm:</label>
+                <textarea id="imei" name="imei" required placeholder="Ví dụ: 111222333,444555666,777888999"></textarea>
+            </div>
+            <div class="imei-note">
+                <p><b>Hướng dẫn:</b> Cứ mỗi IMEI bạn hãy dùng một dấu phẩy (,) để ngăn cách. Ví dụ: 111,222,333. Hệ thống sẽ tự động xuống dòng cho mỗi IMEI.</p>
+            </div>
+            <div class="form-group">
+                <label for="price">Giá nhập:</label>
+                <input type="number" id="price" name="price" required placeholder="Ví dụ: 25000000">
+            </div>
+            <div class="form-group">
+                <label for="sdt">SĐT đơn vị bán:</label>
+                <input type="tel" id="sdt" name="sdt" required placeholder="Ví dụ: 0987654321">
+            </div>
+            <button type="submit" class="submit-btn" id="submit-button">Gửi Thông Tin</button>
+            <div id="form-message"></div>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('nhaphang-form');
+        const submitButton = document.getElementById('submit-button');
+        const formMessage = document.getElementById('form-message');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            submitButton.disabled = true;
+            submitButton.textContent = 'Đang gửi...';
+            formMessage.textContent = '';
+
+            const formData = new FormData(this);
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbyygItRgJrxv3B85HYONpX7QH7RoVa-PSKseAFI-YiRxnyykAvSfFGKAo_AlUdbHxRa/exec'; // <-- THAY URL SCRIPT CỦA BẠN VÀO ĐÂY
+
+            fetch(scriptURL, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    formMessage.textContent = 'Gửi thông tin thành công!';
+                    formMessage.className = 'success';
+                    form.reset();
+                } else {
+                    throw new Error('Server returned an error');
+                }
+            })
+            .catch(error => {
+                formMessage.textContent = 'Gửi thông tin thất bại! Vui lòng thử lại.';
+                formMessage.className = 'error';
+                console.error('Error!', error.message);
+            })
+            .finally(() => {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Gửi Thông Tin';
+            });
+        });
+    </script>
+</body>
+</html>
